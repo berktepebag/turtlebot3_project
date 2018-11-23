@@ -1,3 +1,96 @@
 #!/usr/bin/env python
 
 import rospy
+from geometry_msgs.msg import Twist
+from sensor_msgs.msg import LaserScan
+import math
+import numpy as np
+import pprint
+
+BURGER_MAX_LIN_VEL = 0.22
+BURGER_MAX_ANG_VEL = 2.84
+
+WAFFLE_MAX_LIN_VEL = 0.26
+WAFFLE_MAX_ANG_VEL = 1.82
+
+LIN_VEL_STEP_SIZE = 0.01
+ANG_VEL_STEP_SIZE = 0.1
+
+SAFE_DISTANCE= 0.75
+
+
+
+def measurer(msg):
+	#print("message length: ",msg.ranges[0])
+	#global left_distance, right_distance
+
+	left_distance = 0
+	right_distance = 0
+
+	left_path = []
+	right_path = []
+	paths = []
+
+	
+	
+	for counter, i in enumerate(range(0,60,20)):					
+		#pprint.pprint([counter, msg.ranges[int(i/360*len(msg.ranges))],i])
+		paths.append([round(msg.ranges[int(i*360/float(len(msg.ranges)))],2),counter*15])
+		paths.append([round(msg.ranges[int((360-i*15)/float(len(msg.ranges)))],2),-(counter*15)])
+	#twist_message.linear.x = 0.2
+
+	max_value = 0
+	min_value = 100000
+	degree = 0
+
+	pprint.pprint(paths)
+
+	for path in paths:
+		#print("path value: {} degree: {}".format(path[0],path[1]))
+		if path[0] > max_value:
+			max_value = path[0]
+			degree = path[1]
+		if path[0] < min_value:
+			min_value = path[0]
+
+	print("safe:",SAFE_DISTANCE)
+	if max_value < SAFE_DISTANCE:
+		print("CAUTION")
+		twist_message.linear.x = -0.8
+		twist_message.angular.z = (2*math.pi)
+	else:
+		twist_message.linear.x = 0.2
+		twist_message.angular.z = (2*math.pi*degree/360)*1.25
+
+	print("max value: {} degree: {}".format(max_value,degree))
+	
+	
+	print("degree: ",(2*math.pi*degree/360)*1.25)
+	
+	
+
+def go_in_direction():
+
+	rospy.init_node('go_laser') 
+
+	sub1 = rospy.Subscriber("/scan", LaserScan, measurer)
+
+	pub = rospy.Publisher('cmd_vel', Twist, queue_size = 10)	
+	rate=rospy.Rate(5)	
+
+	print("twist_message.linear.x: ",twist_message.linear.x)
+	print("twist_message.angular.z: ",twist_message.angular.z)
+	while not rospy.is_shutdown():
+		pub.publish(twist_message)
+		rate.sleep()
+
+twist_message = Twist()
+
+
+
+if __name__== "__main__":    
+
+    try:
+    	go_in_direction()    	
+    except Exception as e:
+    	raise e
