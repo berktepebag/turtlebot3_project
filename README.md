@@ -35,13 +35,13 @@ if max_value < SAFE_DISTANCE:
 		print("CAUTION")
 		twist_message.linear.x = -0.8
 		twist_message.angular.z = (2*math.pi)
-	else:
+else:
 		twist_message.linear.x = 0.2
 		twist_message.angular.z = (2*math.pi*degree/360)*1.25
 ```
 
 ### A short video of the turtlebot
-https://www.youtube.com/watch?v=-6guHBeAUWA&t=74s
+<a href="https://www.youtube.com/watch?v=-6guHBeAUWA" target="_blank">Youtube Video: Turtlebot having a tour in the simulator.</a>
 
 ## Known errors and possible solutions
 
