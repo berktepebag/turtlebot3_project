@@ -9,7 +9,7 @@ Code mainly depends on a subscriber for /scan topic and a publisher for /cmd_vel
 This function is responsible from getting lidar scans from /scan topic and looking for 8 points in forward direction of the turtlebot. 
 
 Looking at the points in 60 degrees in each direction with 20 degree intervals.
-<img width="600" alt="Hybrid Image cutoff_frequency 3" src="/imgs/hybrid_image_scales_3.jpg">
+<img width="600" alt="Turtlebot3 Lidar Area Search" src="/imgs/turtle_bot_lidar_angles.jpg">
 
 Adding point distances to path array for further use.
 ```python
